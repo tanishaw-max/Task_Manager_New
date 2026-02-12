@@ -20,12 +20,18 @@ const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173")
   .map((s) => s.trim())
   .filter(Boolean);
 
+console.log('Allowed CORS origins:', allowedOrigins);
+
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log('CORS blocked origin:', origin);
+      callback(null, false);
     }
   },
   credentials: true,
